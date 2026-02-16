@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "app.vercel.zoku.twa",
+    "sha256_cert_fingerprints": ["47:9D:5F:A3:42:2C:48:08:BA:20:67:FC:2D:8A:73:59:14:CE:97:49:9C:ED:47:9D:86:31:07:9C:37:93:1A:36"]
+  }
+}]

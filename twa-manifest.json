@@ -1,0 +1,59 @@
+{
+  "packageId": "app.vercel.zoku.twa",
+  "host": "zoku.vercel.app",
+  "name": "Zoku",
+  "launcherName": "Zoku",
+  "display": "standalone",
+  "themeColor": "#FF6B35",
+  "themeColorDark": "#000000",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#FEFCF8",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://zoku.vercel.app/android-launchericon-512-512.png",
+  "maskableIconUrl": "https://zoku.vercel.app/android-launchericon-512-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "C:\\Users\\thang\\Downloads\\cantio\\android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "1",
+  "appVersionCode": 1,
+  "shortcuts": [
+    {
+      "name": "View Menu",
+      "shortName": "Menu",
+      "url": "https://zoku.vercel.app/menu",
+      "chosenIconUrl": "https://zoku.vercel.app/android-launchericon-192-192.png"
+    },
+    {
+      "name": "My Orders",
+      "shortName": "Orders",
+      "url": "https://zoku.vercel.app/orders",
+      "chosenIconUrl": "https://zoku.vercel.app/android-launchericon-192-192.png"
+    }
+  ],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://zoku.vercel.app/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://zoku.vercel.app/",
+  "minSdkVersion": 21,
+  "orientation": "portrait-primary",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "protocolHandlers": [],
+  "fileHandlers": [],
+  "launchHandlerClientMode": "",
+  "appVersion": "1"
+}

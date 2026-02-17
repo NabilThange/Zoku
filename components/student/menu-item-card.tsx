@@ -113,12 +113,12 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
     return total
   }
 
-  // Clean, minimal card design
+  // Clean, minimal card design following Zoku design system
   return (
     <>
       <Card
         className={cn(
-          "group overflow-hidden bg-white transition-all duration-200 cursor-pointer border-0 shadow-sm hover:shadow-md flex flex-col relative",
+          "group overflow-hidden bg-white transition-all duration-200 cursor-pointer border border-[var(--color-border)] rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 flex flex-col relative",
           compact ? "max-w-sm h-auto" : "h-auto min-h-[340px]",
         )}
         onClick={handleCardClick}
@@ -132,7 +132,7 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
         )}
 
         {/* Image takes upper half */}
-        <div className={cn("relative bg-gray-50 overflow-hidden flex-shrink-0", compact ? "h-[140px]" : "h-[180px]")}>
+        <div className={cn("relative bg-cream-deep overflow-hidden flex-shrink-0 rounded-t-xl", compact ? "h-[140px]" : "h-[180px]")}>
           {!imageError ? (
             <img
               src={item.image || "/placeholder.svg?height=180&width=240"}
@@ -159,26 +159,19 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
 
           {!imageLoaded && !imageError && <div className="absolute inset-0 bg-gray-200 animate-pulse" />}
 
-          {/* Van Badge - Color Coded by Van Type */}
+          {/* Van Badge - Clean monospace style */}
           {item.truckName && (
             <div className="absolute top-2 left-2 z-10">
               <Badge 
                 className={cn(
-                  "text-white text-xs px-2 py-1 font-bold shadow-lg backdrop-blur-sm border-0 flex items-center gap-1",
+                  "text-white font-mono text-xs px-2 py-1 font-medium shadow-md backdrop-blur-sm border-0 uppercase tracking-wider",
                   item.truckName === "Veg Van" && "bg-green-600",
                   item.truckName === "Non-Veg Van" && "bg-red-600",
                   item.truckName === "Healthy Van" && "bg-purple-600",
                   item.truckName === "Dessert Van" && "bg-yellow-600",
-                  !["Veg Van", "Non-Veg Van", "Healthy Van", "Dessert Van"].includes(item.truckName) && "bg-black/80"
+                  !["Veg Van", "Non-Veg Van", "Healthy Van", "Dessert Van"].includes(item.truckName) && "bg-ink"
                 )}
               >
-                <span className="text-sm">
-                  {item.truckName === "Veg Van" && "🥗"}
-                  {item.truckName === "Non-Veg Van" && "🍗"}
-                  {item.truckName === "Healthy Van" && "🥙"}
-                  {item.truckName === "Dessert Van" && "🍰"}
-                  {!["Veg Van", "Non-Veg Van", "Healthy Van", "Dessert Van"].includes(item.truckName) && "🚚"}
-                </span>
                 {item.truckName}
               </Badge>
             </div>
@@ -196,11 +189,10 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
             </div>
           </div>
 
-          {/* Bestseller Badge - NEW */}
+          {/* Bestseller Badge - Clean style */}
           {item.isBestseller && (
             <div className="absolute bottom-2 left-2">
-              <Badge className="bg-yellow-500 text-white text-xs px-2 py-0.5 font-bold shadow-md border-0 flex items-center gap-1">
-                <span>🔥</span>
+              <Badge className="bg-gold text-white font-mono text-xs px-2 py-0.5 font-medium shadow-md border-0 uppercase tracking-wider">
                 Bestseller
               </Badge>
             </div>
@@ -209,13 +201,13 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
           {/* Only Available/Unavailable Status */}
           {item.available ? (
             <div className="absolute bottom-2 right-2">
-              <Badge className="bg-green-100 text-green-700 border border-green-200 text-xs px-2 py-0.5 font-medium shadow-sm">
+              <Badge className="bg-cream-deep text-ink-soft border border-[var(--color-border-strong)] font-mono text-xs px-2 py-0.5 font-medium shadow-sm uppercase tracking-wider">
                 Available
               </Badge>
             </div>
           ) : (
             <div className="absolute bottom-2 right-2">
-              <Badge className="bg-red-100 text-red-700 border border-red-200 text-xs px-2 py-0.5 font-medium shadow-sm">
+              <Badge className="bg-ink text-cream font-mono text-xs px-2 py-0.5 font-medium shadow-sm uppercase tracking-wider">
                 Sold Out
               </Badge>
             </div>
@@ -229,8 +221,8 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
             <div className="flex items-start justify-between gap-2">
               <h3
                 className={cn(
-                  "font-semibold text-gray-900 line-clamp-2 leading-tight flex-1",
-                  compact ? "text-sm" : "text-base",
+                  "font-display font-bold text-ink line-clamp-2 leading-tight flex-1",
+                  compact ? "text-lg" : "text-xl",
                 )}
               >
                 {item.name}
@@ -252,17 +244,17 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
             <div className="flex items-center justify-between">
               {item.rating && item.reviewCount ? (
                 <div className="flex items-center gap-1">
-                  <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                  <span className="text-xs font-medium text-gray-700">{item.rating}</span>
-                  <span className="text-xs text-gray-500">({item.reviewCount})</span>
+                  <Star className="w-3 h-3 fill-gold text-gold" />
+                  <span className="font-mono text-xs font-medium text-ink-soft">{item.rating}</span>
+                  <span className="font-mono text-xs text-ink-muted">({item.reviewCount})</span>
                 </div>
               ) : (
                 <div></div>
               )}
 
-              <div className="flex items-center gap-1 text-gray-600">
+              <div className="flex items-center gap-1 text-ink-soft">
                 <Clock className="w-4 h-4" />
-                <span className="text-sm font-medium">{item.prepTime}m</span>
+                <span className="font-mono text-sm font-medium">{item.prepTime}m</span>
               </div>
             </div>
           </div>
@@ -271,12 +263,12 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
           <div className="flex items-center justify-between flex-shrink-0">
             <div className="space-y-0.5">
               <div className="flex items-center gap-2">
-                <span className={cn("font-bold text-gray-900", compact ? "text-lg" : "text-xl")}>₹{item.price}</span>
-                {hasDiscount && <span className="text-sm text-gray-500 line-through">₹{item.originalPrice}</span>}
+                <span className={cn("font-mono font-bold text-ink", compact ? "text-lg" : "text-xl")}>₹{item.price}</span>
+                {hasDiscount && <span className="font-mono text-sm text-ink-muted line-through">₹{item.originalPrice}</span>}
               </div>
 
               {/* Small calories */}
-              {item.calories && <span className="text-xs text-gray-500">{item.calories} cal</span>}
+              {item.calories && <span className="font-mono text-xs text-ink-muted uppercase tracking-wider">{item.calories} cal</span>}
             </div>
 
             {/* Add to Cart Button */}
@@ -290,14 +282,14 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
                     handleAddToCart()
                   }}
                   className={cn(
-                    "bg-white border-2 border-green-500 text-green-600 hover:bg-green-50 font-semibold transition-colors",
+                    "bg-white border-2 border-[var(--color-border-strong)] text-ink hover:bg-cream-deep hover:border-ink font-sans font-semibold uppercase tracking-wider transition-all duration-150",
                     compact ? "h-8 px-3 text-xs" : "h-9 px-4 text-sm",
                   )}
                 >
                   ADD
                 </Button>
               ) : (
-                <div className="flex items-center gap-1 bg-green-50 border-2 border-green-500 rounded-md px-1">
+                <div className="flex items-center gap-1 bg-cream-deep border-2 border-ink rounded-md px-1">
                   <Button
                     size="sm"
                     variant="ghost"
@@ -305,12 +297,12 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
                       e.stopPropagation()
                       handleQuantityChange(-1)
                     }}
-                    className="h-7 w-7 p-0 text-green-600 hover:bg-green-100"
+                    className="h-7 w-7 p-0 text-ink hover:bg-cream"
                   >
                     <Minus className="w-3 h-3" />
                   </Button>
 
-                  <span className="font-bold text-green-600 px-2 min-w-[1.5rem] text-center text-sm">{quantity}</span>
+                  <span className="font-mono font-bold text-ink px-2 min-w-[1.5rem] text-center text-sm">{quantity}</span>
 
                   <Button
                     size="sm"
@@ -319,7 +311,7 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
                       e.stopPropagation()
                       handleQuantityChange(1)
                     }}
-                    className="h-7 w-7 p-0 text-green-600 hover:bg-green-100"
+                    className="h-7 w-7 p-0 text-ink hover:bg-cream"
                   >
                     <Plus className="w-3 h-3" />
                   </Button>
@@ -381,7 +373,7 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
                   >
                     <div className={cn("w-2 h-2 rounded-full", item.isVeg ? "bg-green-500" : "bg-red-500")} />
                   </div>
-                  <DialogTitle className="text-2xl font-bold text-gray-900 leading-[1.2] tracking-tight flex-1">
+                  <DialogTitle className="font-display text-2xl font-bold text-ink leading-tight tracking-tight flex-1">
                     {item.name}
                   </DialogTitle>
                 </div>
@@ -391,39 +383,29 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
                   {item.truckName && (
                     <Badge 
                       className={cn(
-                        "text-white text-sm px-3 py-1.5 font-bold shadow-md flex items-center gap-1.5",
+                        "text-white font-mono text-sm px-3 py-1.5 font-medium shadow-md uppercase tracking-wider",
                         item.truckName === "Veg Van" && "bg-green-600",
                         item.truckName === "Non-Veg Van" && "bg-red-600",
                         item.truckName === "Healthy Van" && "bg-purple-600",
                         item.truckName === "Dessert Van" && "bg-yellow-600",
-                        !["Veg Van", "Non-Veg Van", "Healthy Van", "Dessert Van"].includes(item.truckName) && "bg-black/80"
+                        !["Veg Van", "Non-Veg Van", "Healthy Van", "Dessert Van"].includes(item.truckName) && "bg-ink"
                       )}
                     >
-                      <span className="text-base">
-                        {item.truckName === "Veg Van" && "🥗"}
-                        {item.truckName === "Non-Veg Van" && "🍗"}
-                        {item.truckName === "Healthy Van" && "🥙"}
-                        {item.truckName === "Dessert Van" && "🍰"}
-                        {!["Veg Van", "Non-Veg Van", "Healthy Van", "Dessert Van"].includes(item.truckName) && "🚚"}
-                      </span>
                       {item.truckName}
                     </Badge>
                   )}
                   {item.isBestseller && (
-                    <Badge className="bg-yellow-100 text-yellow-800 border border-yellow-200 flex items-center gap-1">
-                      <Award className="w-3 h-3" />
+                    <Badge className="bg-gold-light text-gold-dark border border-gold font-mono uppercase tracking-wider">
                       Best Seller
                     </Badge>
                   )}
                   {item.isSpicy && (
-                    <Badge className="bg-red-100 text-red-800 border border-red-200 flex items-center gap-1">
-                      <Flame className="w-3 h-3" />
+                    <Badge className="bg-cream-deep text-ink border border-[var(--color-border-strong)] font-mono uppercase tracking-wider">
                       Spicy
                     </Badge>
                   )}
                   {item.isPopular && (
-                    <Badge className="bg-blue-100 text-blue-800 border border-blue-200 flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3" />
+                    <Badge className="bg-cream-deep text-ink border border-[var(--color-border-strong)] font-mono uppercase tracking-wider">
                       Popular
                     </Badge>
                   )}
@@ -432,37 +414,37 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
                 {/* Pills - Calories, Time, Rating */}
                 <div className="flex items-center gap-3 flex-wrap">
                   {item.calories && (
-                    <div className="bg-gray-100 rounded-full px-4 py-2 flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-gray-600" />
-                      <span className="text-sm font-medium text-gray-700 leading-[1.4]">{item.calories} cals</span>
+                    <div className="bg-cream-deep rounded-full px-4 py-2 flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-ink-soft" />
+                      <span className="font-mono text-sm font-medium text-ink uppercase tracking-wider">{item.calories} cals</span>
                     </div>
                   )}
 
-                  <div className="bg-gray-100 rounded-full px-4 py-2 flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-gray-600" />
-                    <span className="text-sm font-medium text-gray-700 leading-[1.4]">{item.prepTime}min</span>
+                  <div className="bg-cream-deep rounded-full px-4 py-2 flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-ink-soft" />
+                    <span className="font-mono text-sm font-medium text-ink uppercase tracking-wider">{item.prepTime}min</span>
                   </div>
 
                   {item.rating && (
-                    <div className="bg-gray-100 rounded-full px-4 py-2 flex items-center gap-2">
-                      <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                      <span className="text-sm font-medium text-gray-700 leading-[1.4]">{item.rating} stars</span>
+                    <div className="bg-cream-deep rounded-full px-4 py-2 flex items-center gap-2">
+                      <Star className="w-4 h-4 fill-gold text-gold" />
+                      <span className="font-mono text-sm font-medium text-ink uppercase tracking-wider">{item.rating} stars</span>
                     </div>
                   )}
                 </div>
 
                 {/* Price */}
                 <div className="flex items-baseline gap-3">
-                  <span className="text-3xl font-bold text-gray-900 leading-[1.1] tracking-tight">₹{item.price}</span>
+                  <span className="font-mono text-3xl font-bold text-ink leading-tight tracking-tight">₹{item.price}</span>
                   {hasDiscount && (
-                    <span className="text-lg text-gray-500 line-through leading-[1.2]">₹{item.originalPrice}</span>
+                    <span className="font-mono text-lg text-ink-muted line-through leading-tight">₹{item.originalPrice}</span>
                   )}
                 </div>
 
                 {/* Description */}
                 {item.description && (
                   <div>
-                    <p className="text-gray-600 leading-[1.6] text-base tracking-wide">{item.description}</p>
+                    <p className="font-sans text-ink-soft leading-relaxed text-base">{item.description}</p>
                   </div>
                 )}
 
@@ -532,13 +514,13 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
               </div>
 
               {/* Footer with Add to Cart / Quantity Selector */}
-              <div className="p-6 border-t border-gray-100 bg-white rounded-b-2xl flex-shrink-0">
+              <div className="p-6 border-t border-[var(--color-border)] bg-white rounded-b-2xl flex-shrink-0">
                 {quantity === 0 ? (
                   <Button
                     size="lg"
                     disabled={!item.available}
                     onClick={handleAddToCart}
-                    className="w-full h-14 text-lg font-bold bg-orange-500 hover:bg-orange-600 text-white rounded-2xl shadow-lg leading-[1.2] tracking-tight"
+                    className="w-full h-14 text-lg font-bold bg-ink hover:bg-ink-soft text-cream rounded-lg shadow-md font-sans uppercase tracking-wider"
                   >
                     <ShoppingCart className="w-5 h-5 mr-3" />
                     Add to Cart
@@ -549,20 +531,20 @@ export function MenuItemCard({ item, onAddToCart, cartQuantity = 0, onItemClick,
                       size="lg"
                       variant="outline"
                       onClick={() => handleQuantityChange(-1)}
-                      className="w-14 h-14 rounded-2xl border-2 border-orange-500 text-orange-600 hover:bg-orange-50"
+                      className="w-14 h-14 rounded-lg border-2 border-ink text-ink hover:bg-cream-deep"
                     >
                       <Minus className="w-5 h-5" />
                     </Button>
 
                     <div className="flex-1 text-center">
-                      <div className="text-2xl font-bold text-gray-900 leading-[1.1]">{quantity}</div>
-                      <div className="text-sm text-gray-500 leading-[1.3] mt-1">In Cart</div>
+                      <div className="font-mono text-2xl font-bold text-ink leading-tight">{quantity}</div>
+                      <div className="font-mono text-sm text-ink-muted leading-tight mt-1 uppercase tracking-wider">In Cart</div>
                     </div>
 
                     <Button
                       size="lg"
                       onClick={() => handleQuantityChange(1)}
-                      className="w-14 h-14 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white"
+                      className="w-14 h-14 rounded-lg bg-ink hover:bg-ink-soft text-cream"
                     >
                       <Plus className="w-5 h-5" />
                     </Button>

@@ -1,0 +1,527 @@
+# Nabil's Kitchen — Design System Spec
+**Version 2.0 — Modern Premium**
+
+> This document is the single source of truth for all UI decisions across every page and component. When in doubt, refer here first. Every token, rule, and pattern below applies globally.
+
+---
+
+## 1. Brand Direction
+
+**From →** Loud, maximalist street food energy. Impact font. Emoji-heavy. Yellow + black everywhere.
+
+**To →** Premium fast-casual. Still bold and confident, but with breathing room, intention, and craft. Think: Shake Shack meets editorial design. The food is the hero — the UI frames it.
+
+**The one thing to remember:** *Controlled tension.* Large type + generous space. One accent color used sparingly. Dark and cream, not black and yellow chaos.
+
+---
+
+## 2. Typography
+
+### Font Families
+
+| Role | Font | Import |
+|------|------|--------|
+| **Display** (headings, hero) | `Playfair Display` | Google Fonts |
+| **Sans** (body, UI, labels) | `DM Sans` | Google Fonts |
+| **Mono** (prices, tags, badges) | `DM Mono` | Google Fonts |
+
+```tsx
+// In layout.tsx
+import { Playfair_Display, DM_Sans, DM_Mono } from "next/font/google"
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["400", "700", "900"],
+  style: ["normal", "italic"],
+})
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["300", "400", "500", "600", "700"],
+})
+
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["300", "400", "500"],
+})
+```
+
+### Type Scale
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--text-xs` | `0.75rem` / 12px | Legal, captions |
+| `--text-sm` | `0.875rem` / 14px | Labels, metadata |
+| `--text-base` | `1rem` / 16px | Body copy |
+| `--text-lg` | `1.125rem` / 18px | Lead text |
+| `--text-xl` | `1.375rem` / 22px | Card titles |
+| `--text-2xl` | `1.75rem` / 28px | Section subtitles |
+| `--text-3xl` | `2.25rem` / 36px | Section headings |
+| `--text-4xl` | `3rem` / 48px | Page headings |
+| `--text-5xl` | `4rem` / 64px | Hero subtext |
+| `--text-display` | `clamp(3.5rem, 8vw, 7rem)` | Hero display |
+
+### Type Rules
+
+- **Display headings** → `font-family: var(--font-display)`, weight 900, letter-spacing `-0.03em`
+- **Section headings** → `font-family: var(--font-display)`, weight 700
+- **Body / UI** → `font-family: var(--font-sans)`, weight 400–500
+- **Badges, prices, tags** → `font-family: var(--font-mono)`, weight 500, uppercase
+- **Line height** → Display: `1.0–1.1` · Body: `1.6` · UI labels: `1.3`
+- **Max line length** → `60ch` for body paragraphs
+- **NO Impact, Arial Black, or system-stack fonts** anywhere
+
+---
+
+## 3. Color Palette
+
+### Core Colors
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `--color-cream` | `#FAF6EF` | Page background (primary) |
+| `--color-cream-deep` | `#F0E8DA` | Section alternates, cards |
+| `--color-ink` | `#1C1917` | Primary text, dark backgrounds |
+| `--color-ink-soft` | `#44403C` | Secondary text |
+| `--color-ink-muted` | `#78716C` | Placeholder, captions |
+| `--color-gold` | `#C8952A` | **Primary accent** (replaces yellow) |
+| `--color-gold-light` | `#F5DFA0` | Soft highlight, hover states |
+| `--color-gold-dark` | `#8B6318` | Gold on dark backgrounds |
+| `--color-white` | `#FFFFFF` | Cards, nav, modals |
+| `--color-border` | `#E7E0D8` | Dividers, input borders |
+| `--color-border-strong` | `#C9BFB5` | Active borders, focus rings |
+
+### Semantic Colors
+
+| Token | Maps To | Usage |
+|-------|---------|-------|
+| `--color-bg` | `--color-cream` | Default page bg |
+| `--color-bg-alt` | `--color-cream-deep` | Alternating sections |
+| `--color-bg-inverse` | `--color-ink` | Dark sections |
+| `--color-text` | `--color-ink` | Primary text |
+| `--color-text-secondary` | `--color-ink-soft` | Secondary copy |
+| `--color-text-muted` | `--color-ink-muted` | Captions, metadata |
+| `--color-text-inverse` | `#FAF6EF` | Text on dark bg |
+| `--color-accent` | `--color-gold` | CTAs, highlights |
+| `--color-accent-subtle` | `--color-gold-light` | Soft accents |
+
+### Usage Rules
+
+- **One accent per screen.** Gold should appear in 1–2 places per page section, never everywhere.
+- **Dark sections** use `--color-ink` bg with `--color-text-inverse` text.
+- **Cards** are always `--color-white` on `--color-cream` background.
+- **No pure `#000000` or `#ffffff`** — always use the warm-tinted ink/cream tokens.
+- The old `#FDB913` yellow is retired. Use `--color-gold` (`#C8952A`) for all accent moments.
+- The old `#E63946` red is retired. For urgency/badges use `--color-ink` with gold border.
+
+---
+
+## 4. Spacing System
+
+All spacing follows an **8px base grid**. Use multiples.
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--space-1` | `4px` | Micro gaps, icon padding |
+| `--space-2` | `8px` | Tight internal padding |
+| `--space-3` | `12px` | Badge padding, small gaps |
+| `--space-4` | `16px` | Default element gap |
+| `--space-5` | `20px` | Form field padding |
+| `--space-6` | `24px` | Card internal padding |
+| `--space-8` | `32px` | Section internal spacing |
+| `--space-10` | `40px` | Component gaps |
+| `--space-12` | `48px` | Large component spacing |
+| `--space-16` | `64px` | Section padding (mobile) |
+| `--space-20` | `80px` | Section padding (desktop) |
+| `--space-24` | `96px` | Hero padding |
+| `--space-32` | `128px` | Large hero breathing room |
+
+### Layout Rules
+
+- **Max content width:** `1280px` with `px-6` (24px) on mobile, `px-10` (40px) on desktop
+- **Section vertical padding:** `py-16` mobile → `py-24` desktop (use responsive)
+- **Grid gaps:** `gap-6` (mobile) → `gap-10` (desktop)
+- **Hero sections** get extra top padding: `pt-24` minimum after fixed nav
+
+---
+
+## 5. Border Radius
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--radius-sm` | `4px` | Badges, tags, small chips |
+| `--radius-md` | `8px` | Buttons, inputs |
+| `--radius-lg` | `12px` | Cards |
+| `--radius-xl` | `16px` | Large cards, modals |
+| `--radius-2xl` | `24px` | Feature panels |
+| `--radius-pill` | `9999px` | Pill buttons, avatars |
+
+---
+
+## 6. Shadows
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--shadow-xs` | `0 1px 2px rgba(28,25,23,0.05)` | Subtle lift |
+| `--shadow-sm` | `0 1px 4px rgba(28,25,23,0.08), 0 1px 2px rgba(28,25,23,0.06)` | Default card |
+| `--shadow-md` | `0 4px 12px rgba(28,25,23,0.10), 0 2px 4px rgba(28,25,23,0.06)` | Elevated card |
+| `--shadow-lg` | `0 12px 32px rgba(28,25,23,0.12), 0 4px 8px rgba(28,25,23,0.08)` | Modal, hero elements |
+| `--shadow-xl` | `0 24px 64px rgba(28,25,23,0.16), 0 8px 16px rgba(28,25,23,0.08)` | Hero truck, floating panels |
+| `--shadow-gold` | `0 4px 20px rgba(200,149,42,0.25)` | Gold CTA button hover |
+
+---
+
+## 7. Components
+
+### 7.1 Navigation
+
+```
+Background:   white / 95% opacity + backdrop-blur(8px)
+Border:       1px solid var(--color-border)
+Height:       64px
+Brand font:   --font-display, 18px, weight 700
+Nav links:    --font-sans, 14px, weight 500, --color-ink-soft
+              → hover: --color-ink, underline offset 4px
+CTA button:   see Button / Primary below
+```
+
+### 7.2 Buttons
+
+**Primary**
+```
+bg:           var(--color-ink)
+color:        var(--color-text-inverse)
+font:         --font-sans, 14px, weight 600, tracking 0.02em, uppercase
+padding:      12px 28px
+radius:       var(--radius-md)
+hover:        bg lighten 10%, shadow-gold
+transition:   150ms ease
+```
+
+**Secondary**
+```
+bg:           transparent
+color:        var(--color-ink)
+border:       1.5px solid var(--color-border-strong)
+font:         same as primary
+padding:      11px 27px  (1px less to account for border)
+hover:        bg var(--color-cream-deep), border --color-ink
+```
+
+**Accent (Gold)**
+```
+bg:           var(--color-gold)
+color:        var(--color-white)
+font:         same as primary
+hover:        bg var(--color-gold-dark), shadow-gold
+```
+
+**Rules:**
+- No border-radius above `--radius-md` on buttons (no pill buttons unless it's a tag/chip)
+- Button text is always uppercase, tracked at `0.05em`
+- Minimum touch target: `44px` height
+
+### 7.3 Cards
+
+```
+bg:           var(--color-white)
+border:       1px solid var(--color-border)
+radius:       var(--radius-lg)
+shadow:       var(--shadow-sm)
+padding:      var(--space-6)
+hover:        shadow-md, translateY(-2px), transition 200ms ease
+
+Image area:   aspect-ratio 4/3 or 1/1, overflow hidden, radius inside = --radius-md
+Title:        --font-display, --text-xl, weight 700, --color-ink
+Meta:         --font-mono, --text-sm, --color-ink-muted, uppercase
+Body:         --font-sans, --text-base, --color-text-secondary
+```
+
+### 7.4 Badges / Tags
+
+```
+font:         --font-mono, --text-xs, weight 500, uppercase, tracking 0.08em
+padding:      3px 8px
+radius:       var(--radius-sm)
+
+Variants:
+  Default:    bg --color-cream-deep, color --color-ink-soft
+  Accent:     bg --color-gold-light, color --color-gold-dark
+  Dark:       bg --color-ink, color --color-text-inverse
+  Outline:    border 1px solid --color-border-strong, color --color-ink-soft
+```
+
+**No rotated badges.** The old `rotate(-2deg)` TASTY / DELICIOUS badges are replaced with clean inline tags.
+
+### 7.5 Form Inputs
+
+```
+bg:           var(--color-white)
+border:       1.5px solid var(--color-border)
+radius:       var(--radius-md)
+padding:      12px 16px
+font:         --font-sans, --text-base, --color-ink
+placeholder:  --color-ink-muted
+
+focus:
+  border-color:   var(--color-gold)
+  box-shadow:     0 0 0 3px rgba(200,149,42,0.12)
+  outline:        none
+
+error:
+  border-color:   #C0392B
+  box-shadow:     0 0 0 3px rgba(192,57,43,0.1)
+
+Label:        --font-sans, --text-sm, weight 600, --color-ink, margin-bottom 6px
+Helper text:  --font-sans, --text-xs, --color-ink-muted
+```
+
+### 7.6 Section Dividers / Marquee Bar
+
+```
+bg:             var(--color-ink)
+color:          var(--color-text-inverse)
+font:           --font-mono, 13px, weight 500, tracking 0.06em, uppercase
+separator:      "·" or "—" in --color-gold, not bullet "•"
+padding:        12px 0
+animation:      CSS transform marquee, requestAnimationFrame preferred
+```
+
+---
+
+## 8. Iconography
+
+- **Library:** `lucide-react` only (already installed)
+- **Size:** `16px` (inline), `20px` (UI actions), `24px` (nav/hero)
+- **Stroke width:** `1.5` (default lucide) — do not override to 2 or bold
+- **Color:** Always inherit from text color via `currentColor`
+- **No emoji in UI.** Emoji are only allowed inside food photography placeholders. All decorative icons must use lucide or inline SVG.
+
+---
+
+## 9. Decorative Elements
+
+The old design used heavy emoji-based decoration. The new direction:
+
+| Old | New |
+|-----|-----|
+| Rotated emoji badges | Clean monospace tags, no rotation |
+| 🚚 emoji truck | Actual image or CSS-drawn truck |
+| 🍔 🥗 🦐 emoji in cards | Replace with image `<img>` when possible |
+| Background "TAS / DEL" ghost text | Retained but use `--font-display` italic, opacity `0.06` |
+| Squiggle SVG deco | Retained — tasteful, refined stroke `1.5px` |
+| Triangle / circle SVGs | Retained — opacity max `0.3` |
+
+**Ghost text** behind sections should:
+- Use `--font-display` italic
+- Be `opacity: 0.05–0.08` max
+- Color: `--color-ink` (not gray)
+- Font size: `clamp(120px, 18vw, 200px)`
+
+---
+
+## 10. Motion & Animation
+
+| Type | Duration | Easing |
+|------|----------|--------|
+| Hover state | `150ms` | `ease` |
+| Enter/exit (small) | `200ms` | `cubic-bezier(0,0,0.2,1)` |
+| Page element reveal | `400ms` | `cubic-bezier(0.16,1,0.3,1)` |
+| Marquee | `requestAnimationFrame` | Linear |
+
+**Rules:**
+- No `transition: all` — always specify the property
+- `prefers-reduced-motion` must disable all animations
+- Page load stagger: delay each hero element by `+80ms`
+- No bounce or spring on UI elements (only on hero illustrations)
+
+---
+
+## 11. Imagery Guidelines
+
+| Context | Aspect Ratio | Treatment |
+|---------|-------------|-----------|
+| Hero food image | `16/9` or free | Full bleed, slight warm overlay |
+| Card food photo | `4/3` | `object-fit: cover`, no filter |
+| Category thumbnail | `1/1` | Rounded `--radius-lg` |
+| Chef / people | `3/4` | Rounded top, full bleed bottom |
+
+- All images use `next/image` with `priority` on above-fold
+- Placeholder: warm gradient `from-[#F0E8DA] to-[#E5D9C9]`, no emoji
+- Never stretch images — always `object-fit: cover`
+
+---
+
+## 12. Globals Template
+
+Paste this into `globals.css`, replacing everything in the `:root` block:
+
+```css
+:root {
+  /* Fonts */
+  --font-display: var(--font-playfair), 'Georgia', serif;
+  --font-sans:    var(--font-dm-sans), system-ui, sans-serif;
+  --font-mono:    var(--font-dm-mono), 'Courier New', monospace;
+
+  /* Colors */
+  --color-cream:         #FAF6EF;
+  --color-cream-deep:    #F0E8DA;
+  --color-ink:           #1C1917;
+  --color-ink-soft:      #44403C;
+  --color-ink-muted:     #78716C;
+  --color-gold:          #C8952A;
+  --color-gold-light:    #F5DFA0;
+  --color-gold-dark:     #8B6318;
+  --color-white:         #FFFFFF;
+  --color-border:        #E7E0D8;
+  --color-border-strong: #C9BFB5;
+
+  /* Semantic */
+  --color-bg:           var(--color-cream);
+  --color-bg-alt:       var(--color-cream-deep);
+  --color-bg-inverse:   var(--color-ink);
+  --color-text:         var(--color-ink);
+  --color-text-secondary: var(--color-ink-soft);
+  --color-text-muted:   var(--color-ink-muted);
+  --color-text-inverse: var(--color-cream);
+  --color-accent:       var(--color-gold);
+  --color-accent-subtle: var(--color-gold-light);
+
+  /* Spacing */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* Radii */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-2xl:  24px;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(28,25,23,0.05);
+  --shadow-sm: 0 1px 4px rgba(28,25,23,0.08), 0 1px 2px rgba(28,25,23,0.06);
+  --shadow-md: 0 4px 12px rgba(28,25,23,0.10), 0 2px 4px rgba(28,25,23,0.06);
+  --shadow-lg: 0 12px 32px rgba(28,25,23,0.12), 0 4px 8px rgba(28,25,23,0.08);
+  --shadow-xl: 0 24px 64px rgba(28,25,23,0.16), 0 8px 16px rgba(28,25,23,0.08);
+  --shadow-gold: 0 4px 20px rgba(200,149,42,0.25);
+
+  /* Motion */
+  --duration-fast:   150ms;
+  --duration-normal: 200ms;
+  --duration-slow:   400ms;
+  --ease-out:  cubic-bezier(0, 0, 0.2, 1);
+  --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Base */
+html {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Focus */
+*:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-gold-light);
+  color: var(--color-gold-dark);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+---
+
+## 13. Tailwind Config Additions
+
+Add these to `tailwind.config.ts` to use tokens as Tailwind classes:
+
+```ts
+theme: {
+  extend: {
+    colors: {
+      cream:    "#FAF6EF",
+      "cream-deep": "#F0E8DA",
+      ink:      "#1C1917",
+      "ink-soft":  "#44403C",
+      "ink-muted": "#78716C",
+      gold:     "#C8952A",
+      "gold-light": "#F5DFA0",
+      "gold-dark":  "#8B6318",
+    },
+    fontFamily: {
+      display: ["var(--font-display)", "Georgia", "serif"],
+      sans:    ["var(--font-sans)", "system-ui", "sans-serif"],
+      mono:    ["var(--font-mono)", "monospace"],
+    },
+    boxShadow: {
+      gold: "0 4px 20px rgba(200,149,42,0.25)",
+    },
+  },
+}
+```
+
+---
+
+## 14. Page-by-Page Checklist
+
+When updating each of your 10–15 files, go through this in order:
+
+1. **Replace** all `bg-[#F5E6D3]` / `bg-[#FDB913]` → `bg-cream` / `bg-gold`
+2. **Replace** all `text-[#1A1A1A]` → `text-ink`
+3. **Replace** `font-black` on headings → `font-display font-bold` or `font-black`
+4. **Replace** `Arial Black` / `Impact` inline styles → `font-display` class
+5. **Replace** emoji placeholders in cards → warm gradient divs
+6. **Replace** rotated badges → clean `font-mono uppercase` spans
+7. **Check** all buttons match the component spec above
+8. **Check** all inputs have the correct focus ring (`ring-gold`)
+9. **Add** `leading-tight` to all display headings
+10. **Verify** section alternates between `bg-cream` and `bg-cream-deep` (not random colors)
+
+---
+
+## 15. Anti-Patterns (Never Do)
+
+- ❌ `font-family: Impact` or `Arial Black` anywhere
+- ❌ `transform: rotate(Xdeg)` on text badges
+- ❌ `bg-[#FDB913]` — use `bg-gold` token
+- ❌ Emoji as UI icons (`🔥`, `📱`, `⭐`)
+- ❌ `text-[80px]` hardcoded — use `clamp()` or scale tokens
+- ❌ `transition: all` — always specify property
+- ❌ Multiple accent colors in one section
+- ❌ `font-bold` on body copy (only `font-medium` or `font-semibold` max)
+- ❌ Inline `style={{ color: "#1A1A1A" }}` — use Tailwind classes from the token map
+
+---
+
+*Last updated: 2025 · Nabil's Kitchen v2.0*

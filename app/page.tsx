@@ -1,531 +1,944 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { ArrowRight, Play } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { AnimatedList } from "@/components/magicui/animated-list"
-import { AnimatedGridPattern } from "@/components/magicui/animated-grid-pattern"
-import { useEffect, useRef, useCallback, memo, useState } from "react"
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { Flip } from "gsap/dist/Flip";
+import { SplitText } from "gsap/dist/SplitText";
+import Image from "next/image";
+import Link from "next/link";
 
-interface Item {
-  name: string
-  description: string
-  icon: string
-  color: string
-  time: string
-}
-
-let notifications = [
-  {
-    name: "Order delivered",
-    description: "Priya just loved her Butter Chicken! 😋",
-    time: "2m ago",
-    icon: "🚀",
-    color: "#FF6B35",
-  },
-  {
-    name: "5⭐ rating received",
-    description: "Students can't stop raving about Cantio!",
-    time: "5m ago",
-    icon: "⭐",
-    color: "#FFB800",
-  },
-  {
-    name: "Craving satisfied",
-    description: "Rahul's Samosa addiction = cured ✨",
-    time: "8m ago",
-    icon: "😍",
-    color: "#00C9A7",
-  },
-  {
-    name: "Zero queue time",
-    description: "Another happy customer skipped the line!",
-    time: "12m ago",
-    icon: "⚡",
-    color: "#1E86FF",
-  },
-]
-
-notifications = Array.from({ length: 3 }, () => notifications).flat()
-
-const Notification = ({ name, description, icon, color, time }: Item) => {
-  return (
-    <figure
-      className={cn(
-        "relative mx-auto min-h-fit w-full max-w-[400px] cursor-pointer overflow-hidden rounded-2xl p-4",
-        "transition-all duration-200 ease-out hover:scale-[1.02] focus-within:scale-[1.02]",
-        "bg-white [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]",
-        "dark:bg-transparent dark:backdrop-blur-md dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]",
-        "focus-within:outline-2 focus-within:outline-[#FF6B35] focus-within:outline-offset-2"
-      )}
-    >
-      <div className="flex flex-row items-center gap-3">
-        <div
-          className="flex size-10 items-center justify-center rounded-2xl flex-shrink-0"
-          style={{
-            backgroundColor: color,
-          }}
-        >
-          <span className="text-lg">{icon}</span>
-        </div>
-        <div className="flex flex-col overflow-hidden min-w-0">
-          <figcaption className="flex flex-row items-center whitespace-pre text-lg font-medium dark:text-white">
-            <span className="text-sm sm:text-base truncate">{name}</span>
-            <span className="mx-1 flex-shrink-0">·</span>
-            <span className="text-xs text-gray-500 flex-shrink-0">{time}</span>
-          </figcaption>
-          <p className="text-sm font-normal dark:text-white/60 line-clamp-2 leading-relaxed">{description}</p>
-        </div>
-      </div>
-    </figure>
-  )
-}
-
-// Final optimized video component
-const OptimizedVideoPlayer = memo(() => {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [hasPlayed, setHasPlayed] = useState(false)
-
-  // Intersection observer for initial play only
-  useEffect(() => {
-    if (typeof window === "undefined" || hasPlayed) return
-    const vid = videoRef.current
-    if (!vid || !("IntersectionObserver" in window)) return
-    
-    const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !hasPlayed) {
-        vid.play().then(() => {
-          setHasPlayed(true)
-        }).catch(() => {})
-      }
-    }, { 
-      threshold: 0.25,
-      rootMargin: "10% 0px"
-    })
-    
-    io.observe(vid)
-    return () => io.disconnect()
-  }, [hasPlayed])
-
-  // Handle video end - prevent restart
-  const handleVideoEnd = useCallback(() => {
-    setHasPlayed(true)
-  }, [])
-
-  // Handle autoplay failures gracefully
-  const handleVideoError = useCallback(() => {
-    const vid = videoRef.current
-    if (vid && !hasPlayed) {
-      vid.muted = true
-      vid.play().then(() => {
-        setHasPlayed(true)
-      }).catch(() => {})
-    }
-  }, [hasPlayed])
-
-  return (
-    <div className="relative w-full max-w-2xl mx-auto">
-      <div 
-        className="bg-white rounded-lg shadow-lg border border-gray-200/60 overflow-hidden backdrop-blur-sm video-container"
-        style={{
-          aspectRatio: "16/9",
-        }}
-      >
-        <video
-          ref={videoRef}
-          className="hero-video w-full h-full object-cover"
-          autoPlay
-          muted
-          playsInline
-          preload="metadata"
-          poster="/video/cantiohrs1_poster.jpg"
-          width={896}
-          height={504}
-          volume={0}
-          onEnded={handleVideoEnd}
-          onError={handleVideoError}
-          aria-label="Cantio demo video"
-          style={{
-            willChange: 'auto',
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
-            transform: 'translate3d(0, 0, 0)',
-            WebkitTransform: 'translate3d(0, 0, 0)'
-          }}
-        >
-          {/* Mobile-optimized sources - compressed without audio */}
-          <source 
-            src="/cantiohrs1_mobile.webm" 
-            type="video/webm; codecs=vp9" 
-            media="(max-width: 768px)" 
-          />
-          <source 
-            src="/cantiohrs1_mobile.mp4" 
-            type='video/mp4; codecs="avc1.42E01E"' 
-            media="(max-width: 768px)" 
-          />
-          {/* Desktop sources - compressed without audio */}
-          <source 
-            src="/cantiohrs1.webm" 
-            type="video/webm; codecs=vp9" 
-          />
-          <source 
-            src="/cantiohrs1.mp4" 
-            type='video/mp4; codecs="avc1.64001F"' 
-          />
-          <p>Your browser doesn't support HTML5 video. <a href="/cantiohrs1.mp4">Download the video</a>.</p>
-        </video>
-      </div>
-    </div>
-  )
-})
-
-OptimizedVideoPlayer.displayName = "OptimizedVideoPlayer"
-
-function AnimatedListDemo({
-  className,
-}: {
-  className?: string
-}) {
-  return (
-    <div className={cn(
-      "relative flex w-full flex-col overflow-hidden p-2", 
-      "h-[280px] sm:h-[320px] md:h-[360px] lg:h-[400px]",
-      className
-    )}>
-      <AnimatedList delay={2500}>
-        {notifications.map((item, idx) => (
-          <Notification {...item} key={idx} />
-        ))}
-      </AnimatedList>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-white/80"></div>
-    </div>
-  )
-}
+// ✅ Register plugins at module level — safe in "use client" files
+gsap.registerPlugin(Flip, SplitText);
 
 export default function LandingPage() {
+  const heroRef = useRef<HTMLElement>(null);
+
   useEffect(() => {
-    const setVh = () => {
-      document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`)
-    }
-    setVh()
-    window.addEventListener("resize", setVh)
-    window.addEventListener("orientationchange", setVh)
-    return () => {
-      window.removeEventListener("resize", setVh)
-      window.removeEventListener("orientationchange", setVh)
-    }
-  }, [])
+    const hero = heroRef.current;
+    if (!hero) return;
+
+    // ✅ Scoped gsap context — all animations auto-cleaned on unmount
+    const ctx = gsap.context(() => {
+      // ─── Text Splitting ────────────────────────────────────────────────
+      const setupTextSplitting = () => {
+        const textElements = hero.querySelectorAll("h1, h2, p, a, .cta-wrapper a");
+        textElements.forEach((element) => {
+          SplitText.create(element, {
+            type: "lines",
+            linesClass: "line",
+          });
+          const lines = element.querySelectorAll(".line");
+          lines.forEach((line) => {
+            const textContent = line.textContent || "";
+            line.innerHTML = `<span>${textContent}</span>`;
+          });
+        });
+      };
+
+      // ─── Counter Digits ────────────────────────────────────────────────
+      const createCounterDigits = () => {
+        const counter1 = hero.querySelector(".counter-1");
+        const counter2 = hero.querySelector(".counter-2");
+        const counter3 = hero.querySelector(".counter-3");
+        if (!counter1 || !counter2 || !counter3) return;
+
+        // Counter 1: shows "0" → "1"
+        const num0 = document.createElement("div");
+        num0.className = "num";
+        num0.textContent = "0";
+        counter1.appendChild(num0);
+
+        const num1 = document.createElement("div");
+        num1.className = "num num1offset1";
+        num1.textContent = "1";
+        counter1.appendChild(num1);
+
+        // Counter 2: 0–9 then 0 again
+        for (let i = 0; i <= 10; i++) {
+          const numDiv = document.createElement("div");
+          numDiv.className = i === 1 ? "num num1offset2" : "num";
+          numDiv.textContent = i === 10 ? "0" : String(i);
+          counter2.appendChild(numDiv);
+        }
+
+        // Counter 3: 0–9 cycling × 3 then 0
+        for (let i = 0; i < 30; i++) {
+          const numDiv = document.createElement("div");
+          numDiv.className = "num";
+          numDiv.textContent = String(i % 10);
+          counter3.appendChild(numDiv);
+        }
+
+        const finalNum = document.createElement("div");
+        finalNum.className = "num";
+        finalNum.textContent = "0";
+        counter3.appendChild(finalNum);
+      };
+
+      // ─── Counter Animation ─────────────────────────────────────────────
+      const animateCounter = (
+        counter: Element,
+        duration: number,
+        delay = 0
+      ) => {
+        const firstNum = counter.querySelector(".num") as HTMLElement | null;
+        if (!firstNum) return;
+
+        const numHeight = firstNum.clientHeight;
+        if (!numHeight) return;
+
+        const totalDistance =
+          (counter.querySelectorAll(".num").length - 1) * numHeight;
+
+        gsap.to(counter, {
+          y: -totalDistance,
+          duration,
+          delay,
+          ease: "power2.inOut",
+        });
+      };
+
+      // ─── Image Flip Animation ──────────────────────────────────────────
+      const animateImages = () => {
+        const images = hero.querySelectorAll(".img");
+        images.forEach((img) => img.classList.remove("animate-out"));
+
+        const state = Flip.getState(images);
+        images.forEach((img) => img.classList.add("animate-out"));
+
+        const mainTimeline = gsap.timeline();
+        mainTimeline.add(
+          Flip.from(state, {
+            duration: 1,
+            stagger: 0.1,
+            ease: "power3.inOut",
+          })
+        );
+
+        images.forEach((img, index) => {
+          const scaleTimeline = gsap.timeline();
+          scaleTimeline
+            .to(img, { scale: 2.5, duration: 0.45, ease: "power3.in" }, 0.025)
+            .to(img, { scale: 1, duration: 0.45, ease: "power3.out" }, 0.5);
+          mainTimeline.add(scaleTimeline, index * 0.1);
+        });
+
+        return mainTimeline;
+      };
+
+      // ─── Init ──────────────────────────────────────────────────────────
+      setupTextSplitting();
+      createCounterDigits();
+
+      const counter1 = hero.querySelector(".counter-1");
+      const counter2 = hero.querySelector(".counter-2");
+      const counter3 = hero.querySelector(".counter-3");
+
+      if (counter1 && counter2 && counter3) {
+        animateCounter(counter3, 2.5);
+        animateCounter(counter2, 3);
+        animateCounter(counter1, 2, 1.5);
+      }
+
+      // ─── Main Timeline ─────────────────────────────────────────────────
+      const tl = gsap.timeline();
+
+      gsap.set(hero.querySelectorAll(".img"), { scale: 0 });
+
+      tl.to(".hero-bg", {
+        scaleY: "100%",
+        duration: 3,
+        ease: "power2.inOut",
+        delay: 0.25,
+      });
+
+      tl.to(
+        ".img",
+        {
+          scale: 1,
+          duration: 1,
+          stagger: 0.125,
+          ease: "power3.out",
+        },
+        "<"
+      );
+
+      tl.to(".counter", {
+        opacity: 0,
+        duration: 0.3,
+        ease: "power3.out",
+        delay: 0.3,
+        onStart: () => {
+          animateImages();
+        },
+      });
+
+      tl.to(".sidebar .divider", {
+        scaleY: "100%",
+        duration: 1,
+        ease: "power3.inOut",
+        delay: 1.25,
+      });
+
+      tl.to(
+        ["nav .divider", ".site-info .divider"],
+        {
+          scaleX: "100%",
+          duration: 1,
+          stagger: 0.5,
+          ease: "power3.inOut",
+        },
+        "<"
+      );
+
+      tl.to(
+        ".logo",
+        {
+          scale: 1,
+          duration: 1,
+          ease: "power4.inOut",
+        },
+        "<"
+      );
+
+      tl.to(
+        [
+          ".logo-name a span",
+          ".links a span, .links p span",
+          ".cta a span",
+        ],
+        {
+          y: "0%",
+          duration: 1,
+          stagger: 0.1,
+          ease: "power4.out",
+          delay: 0.5,
+        },
+        "<"
+      );
+
+      tl.to(
+        [".contact-btn", ".cta-wrapper a"],
+        {
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+        },
+        ">"
+      );
+
+      tl.to(
+        [
+          ".header h1 span",
+          ".header .cta-wrapper span",
+          ".site-info span",
+        ],
+        {
+          y: "0%",
+          duration: 1,
+          stagger: 0.1,
+          ease: "power4.out",
+        },
+        "<"
+      );
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <div className="bg-[#FAF8F5] relative overflow-hidden" style={{
-      /* CSS Custom Properties for Spacing */
-      '--space-xs': 'clamp(0.75rem, 2vw, 1rem)',
-      '--space-sm': 'clamp(1rem, 3vw, 1.5rem)',
-      '--space-md': 'clamp(1.5rem, 4vw, 2rem)',
-      '--space-lg': 'clamp(2rem, 6vw, 3rem)',
-      '--space-xl': 'clamp(3rem, 8vw, 5rem)',
-      '--hero-padding-top': 'clamp(0.5rem, 2vh, 1rem)',
-      '--hero-padding-bottom': 'clamp(0.5rem, 2vh, 1rem)',
-      '--hero-gap': 'clamp(0.75rem, 2vh, 1rem)',
-    } as React.CSSProperties}>
-      {/* Animated Grid Background */}
-      <div className="fixed inset-0 w-full h-full z-0">
-        <AnimatedGridPattern
-          numSquares={60}
-          maxOpacity={0.12}
-          duration={5}
-          repeatDelay={2}
-          width={60}
-          height={60}
-          strokeDasharray={[2, 8]}
-          className={cn(
-            "w-full h-full",
-            "[mask-image:radial-gradient(800px_circle_at_50%_50%,white,transparent)]",
-            "transform rotate-12 scale-110",
-          )}
-        />
-      </div>
-
-      {/* Hero Section - Fixed Height for Laptops */}
-      <section
-        className="relative z-10 flex flex-col justify-center items-center px-4 sm:px-6 md:px-8 lg:px-12"
-        style={{ 
-          minHeight: "calc(var(--vh, 1vh) * 100)",
-          height: "clamp(100vh, 100vh, 85vh)",
-          paddingTop: "var(--hero-padding-top)",
-          paddingBottom: "var(--hero-padding-bottom)"
-        }}
-      >
-        <div className="max-w-6xl w-full mx-auto flex flex-col justify-center items-center h-full">
-          <div 
-            className="text-center w-full hero-content" 
-            style={{ 
-              gap: "var(--hero-gap)", 
-              display: "flex", 
-              flexDirection: "column",
-              maxWidth: "100%"
-            }}
-          >
-            {/* Hero Title - Mobile Big, Tablet/Desktop Normal */}
-            <div style={{ gap: "var(--space-lg)", display: "flex", flexDirection: "column" }}>
-              <h1
-                className="font-bold leading-tight tracking-tight text-[#2D3748] px-2"
-                style={{
-                  fontSize: "clamp(2.5rem, 8vw, 3.5rem)",
-                  lineHeight: "1.1",
-                  marginTop: "clamp(0rem, 1vh, 0.5rem)",
-                  marginBottom: "clamp(0.5rem, 1vh, 1rem)",
-                }}
-              >
-                Your Campus.
-                <br />
-                <span className="text-[#FF6B35]">Your Cravings.</span>
-              </h1>
-
-              <p
-                className="text-[#718096] leading-relaxed max-w-2xl mx-auto px-4 hero-description"
-                style={{
-                  fontSize: "clamp(1.125rem, 3vw, 1.125rem)",
-                  lineHeight: "1.6",
-                  marginBottom: "clamp(0.25rem, 1vh, 0.5rem)",
-                }}
-              >
-                Multiple food trucks. One platform. Pre-order from your favorite trucks, skip the queue, and grab your food fresh off the grill.
-              </p>
-            </div>
-
-            {/* Optimized Video Component */}
-            <OptimizedVideoPlayer />
-
-            {/* CTA Button - Normal Size for Larger Screens */}
-            <div className="mt-4">
-              <Button
-                size="lg"
-                className="bg-[#FF6B35] hover:bg-[#E55A2B] border-none text-white transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-lg focus:outline-2 focus:outline-[#FF6B35] focus:outline-offset-2 focus:ring-0 w-full sm:w-auto shadow-md rounded-xl font-semibold"
-                style={{ 
-                  minHeight: "clamp(56px, 6vh, 48px)",
-                  padding: "clamp(1rem, 2vw, 1rem) clamp(2rem, 4vw, 2rem)",
-                  fontSize: "clamp(1.125rem, 2.5vw, 1.125rem)",
-                  minWidth: "clamp(280px, 40vw, 260px)",
-                  maxWidth: "300px",
-                  margin: "0 auto"
-                }}
-                onClick={() => (window.location.href = "/onboarding")}
-              >
-                Start Ordering
-                <ArrowRight 
-                  className="ml-2 flex-shrink-0" 
-                  style={{ 
-                    width: "clamp(18px, 2vw, 18px)",
-                    height: "clamp(18px, 2vw, 18px)" 
-                  }} 
-                />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Second Section */}
-      <section
-        className="relative z-10 flex items-center justify-center"
-        style={{ 
-          minHeight: "clamp(600px, calc(var(--vh, 1vh) * 90), 900px)",
-          padding: "var(--space-xl) var(--space-sm)"
-        }}
-      >
-        {/* Subtle overlay */}
-        <div className="absolute inset-0 bg-white/20 backdrop-blur-[1px]"></div>
-
-        <div className="max-w-7xl mx-auto relative z-20 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 items-center" style={{ gap: "var(--space-xl)" }}>
-            {/* Left Content */}
-            <div className="text-center lg:text-left" style={{ gap: "var(--space-lg)", display: "flex", flexDirection: "column" }}>
-              <h2
-                className="font-semibold text-[#2D3748] leading-tight"
-                style={{
-                  fontSize: "clamp(2rem, 5vw, 3rem)",
-                  lineHeight: "1.2",
-                }}
-              >
-                See What's Happening
-                <br />
-                <span className="text-[#FF6B35]">Right Now</span>
-              </h2>
-
-              <p
-                className="text-[#718096] leading-relaxed"
-                style={{
-                  fontSize: "clamp(1rem, 2.5vw, 1.25rem)",
-                  lineHeight: "1.6",
-                }}
-              >
-                Join hundreds of students already ordering smart. Watch live as orders are placed, payments confirmed,
-                and meals picked up in real-time.
-              </p>
-
-              {/* Stats Grid */}
-              <div 
-                className="grid grid-cols-1 xs:grid-cols-2 max-w-md mx-auto lg:mx-0 mt-8"
-                style={{ gap: "var(--space-md)" }}
-              >
-                <div className="text-center lg:text-left p-6 bg-white/70 rounded-xl backdrop-blur-sm shadow-lg border border-white/50 transition-all duration-200 ease-out hover:bg-white/90 hover:shadow-xl">
-                  <div
-                    className="font-bold text-[#FF6B35] mb-2"
-                    style={{ fontSize: "clamp(2rem, 5vw, 2.5rem)" }}
-                  >
-                    500+
-                  </div>
-                  <div 
-                    className="font-semibold text-[#718096]"
-                    style={{ fontSize: "clamp(0.875rem, 2vw, 1rem)" }}
-                  >
-                    Orders Today
-                  </div>
-                </div>
-                <div className="text-center lg:text-left p-6 bg-white/70 rounded-xl backdrop-blur-sm shadow-lg border border-white/50 transition-all duration-200 ease-out hover:bg-white/90 hover:shadow-xl">
-                  <div
-                    className="font-bold text-[#FF6B35] mb-2"
-                    style={{ fontSize: "clamp(2rem, 5vw, 2.5rem)" }}
-                  >
-                    2min
-                  </div>
-                  <div 
-                    className="font-semibold text-[#718096]"
-                    style={{ fontSize: "clamp(0.875rem, 2vw, 1rem)" }}
-                  >
-                    Avg Wait
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right - Animated List */}
-            <div className="relative w-full">
-              <AnimatedListDemo className="rounded-xl border border-gray-200/40 bg-white/70 backdrop-blur-md shadow-xl" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Enhanced Mobile-First Styles */}
-      <style jsx>{`
-        @media (max-width: 359px) {
-          .xs\\:grid-cols-2 {
-            grid-template-columns: 1fr;
-          }
+    <>
+      <style>{`
+        :root {
+          --bg: var(--color-cream);
+          --fg: var(--color-ink);
+          --loader-bg: var(--color-cream-deep);
+          --stroke: var(--color-border);
         }
-        
-        @media (min-width: 360px) {
-          .xs\\:grid-cols-2 {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-        
-        /* Mobile Portrait Optimization */
-        @media (max-width: 480px) and (orientation: portrait) {
-          .hero-content {
-            transform: scale(1);
-            gap: clamp(1.5rem, 5vh, 3rem) !important;
-          }
-        }
-        
-        /* Mobile Landscape Optimization */
-        @media (max-width: 768px) and (orientation: landscape) {
-          section:first-of-type {
-            padding-top: 1rem !important;
-            padding-bottom: 1rem !important;
-          }
-          .hero-content {
-            gap: clamp(1rem, 3vh, 2rem) !important;
-          }
-        }
-        
-        /* Tablet and Desktop - No Scaling, Move Description Up, Much Tighter Spacing */
-        @media (min-width: 769px) {
-          .hero-content {
-            transform: scale(1);
-            gap: 0.75rem !important;
-          }
-          
-          .hero-description {
-            margin-top: -0.75rem !important;
-            margin-bottom: 0.25rem !important;
-          }
-        }
-        
-        @media (prefers-reduced-motion: reduce) {
-          * {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
-            transform: none !important;
-          }
-          
-          button:hover {
-            transform: none !important;
-          }
-        }
-        
-        /* Enhanced Mobile Touch Targets */
-        @media (max-width: 768px) {
-          button {
-            min-height: 48px !important;
-          }
-          
-          .hero-content button {
-            width: 100% !important;
-            max-width: 100% !important;
-          }
-        }
-        
-        /* Improved Text Readability on Small Screens */
-        @media (max-width: 640px) {
-          h1 {
-            letter-spacing: -0.02em;
-          }
-          
-          p {
-            text-align: center !important;
-          }
-        }
-        
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
+
+        /* ✅ Must be global — injected by SplitText at runtime */
+        .line {
           overflow: hidden;
         }
 
-        /* Video Performance Optimizations */
-        .hero-video {
+        .line span {
+          position: relative;
           display: block;
-          will-change: opacity, transform;
-          contain: paint layout;
-          transform: translateZ(0);
+          transform: translateY(125%);
+          will-change: transform;
         }
 
-        .video-container {
-          contain: layout style paint;
-          isolation: isolate;
+        /* ✅ Must be global — injected by createCounterDigits at runtime */
+        .num {
+          /* inherits font-size/line-height from .counter */
         }
 
-        /* Connection-aware preloading */
-        @media (connection: slow-2g), (connection: 2g) {
-          .hero-video {
-            preload: none !important;
+        .num1offset1 {
+          position: relative;
+          right: -5px;
+        }
+
+        .num1offset2 {
+          position: relative;
+          right: -2px;
+        }
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        h1 {
+          font-family: var(--font-display);
+          font-size: 6rem;
+          font-weight: 900;
+          letter-spacing: -0.03em;
+          line-height: 1.1;
+          color: var(--color-ink);
+        }
+
+        h2 {
+          font-family: var(--font-display);
+          font-size: 1.75rem;
+          font-weight: 700;
+          letter-spacing: -0.02rem;
+          line-height: 1.1;
+          color: var(--color-ink);
+        }
+
+        a, p {
+          font-family: var(--font-sans);
+          color: var(--fg);
+          text-decoration: none;
+          font-size: 1rem;
+          font-weight: 500;
+          overflow: hidden;
+          line-height: 1;
+        }
+
+        .divider {
+          background-color: var(--stroke);
+        }
+
+        /* ✅ THE FIX: .img position MUST live in CSS, not inline styles */
+        .images-container .img {
+          position: absolute;
+          top: 1.5rem;
+          left: 1.5rem;
+          width: 20%;
+          aspect-ratio: 5/3;
+          border-radius: var(--radius-lg);
+          overflow: hidden;
+        }
+
+        .images-container .img.animate-out {
+          top: unset;
+          left: unset;
+          bottom: 1.5rem;
+          right: 1.5rem;
+        }
+
+        .contact-btn:hover {
+          background-color: var(--color-gold);
+          color: var(--color-white) !important;
+          border-color: var(--color-gold);
+        }
+
+        @media (max-width: 1000px) {
+          h1 {
+            font-size: 2.5rem;
+            letter-spacing: -0.05rem;
           }
-        }
 
-        /* High-DPI optimizations */
-        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-          .hero-video {
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: optimize-contrast;
+          h2 {
+            font-size: 1.5rem;
+          }
+
+          nav .links {
+            display: none;
+          }
+
+          .images-container .img {
+            width: 30%;
+          }
+
+          .header {
+            top: 25%;
+            width: calc(100% - 12.5rem);
+          }
+
+          .site-info {
+            width: calc(100% - 12.5rem);
+            right: unset;
+            left: 7.5rem;
           }
         }
       `}</style>
-    </div>
-  )
+
+      <section
+        ref={heroRef}
+        className="hero"
+        style={{
+          position: "relative",
+          width: "100%",
+          height: "100svh",
+          backgroundColor: "var(--bg)",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          className="hero-bg"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "var(--loader-bg)",
+            transformOrigin: "bottom",
+            transform: "scaleY(0%)",
+          }}
+        />
+
+        {/* ── Counter ── */}
+        <div
+          className="counter"
+          style={{
+            position: "fixed",
+            right: "3rem",
+            bottom: "2rem",
+            display: "flex",
+            height: "120px",
+            fontSize: "120px",
+            lineHeight: "150px",
+            fontFamily: "var(--font-display)",
+            fontWeight: 900,
+            WebkitTextStroke: "2px var(--fg)",
+            clipPath: "polygon(0 0, 100% 0, 100% 120px, 0 120px)",
+          }}
+        >
+          <div className="counter-1 digit" style={{ position: "relative", top: "-15px" }} />
+          <div className="counter-2 digit" style={{ position: "relative", top: "-15px" }} />
+          <div className="counter-3 digit" style={{ position: "relative", top: "-15px" }} />
+        </div>
+
+        {/* ── Images ── */}
+        <div
+          className="images-container"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          {[
+            "/crispy-golden-samosas.png",
+            "/flavorful-chicken-biryani.png",
+            "/paneer-tikka.png",
+            "/masala-dosa.png",
+            "/veg-fried-rice.png",
+            "/paneer-butter-masala.png",
+            "/elegant-tea-cup.png",
+            "/delicious-food-item.png",
+            "/crispy-golden-samosas.png",
+            "/flavorful-chicken-biryani.png",
+            "/paneer-tikka.png",
+            "/masala-dosa.png",
+            "/veg-fried-rice.png",
+            "/paneer-butter-masala.png",
+            "/elegant-tea-cup.png",
+            "/img15.png"
+          ].map((src, index) => (
+            <div key={index} className="img">
+              <Image
+                src={src}
+                alt="Food"
+                fill
+                style={{ objectFit: "cover" }}
+                priority={index <= 5}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* ── Nav ── */}
+        <nav
+          style={{
+            position: "relative",
+            width: "100%",
+            height: "5rem",
+            padding: "1.5rem 1.5rem 1.5rem 7.5rem",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div className="logo-name">
+            <Link
+              href="/"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "1.5rem",
+                fontWeight: "700",
+                letterSpacing: "-0.05rem",
+                color: "var(--color-ink)",
+              }}
+            >
+              ZOKU
+            </Link>
+          </div>
+
+          <div
+            className="nav-items"
+            style={{ display: "flex", alignItems: "center", gap: "7.5rem" }}
+          >
+            <div
+              className="links"
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+            >
+              <Link href="/menu">Menu</Link>
+              <p>/</p>
+              <Link href="/trucks">Trucks</Link>
+              <p>/</p>
+              <Link href="/about">About</Link>
+            </div>
+
+            <div className="cta">
+              <Link
+                href="/app"
+                className="contact-btn"
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  border: "1px solid var(--fg)",
+                  borderRadius: "var(--radius-md)",
+                  fontSize: "0.875rem",
+                  fontFamily: "var(--font-sans)",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05rem",
+                  transition: "all 0.3s ease",
+                  display: "inline-block",
+                  lineHeight: "1",
+                  opacity: 0,
+                }}
+              >
+                Order Now
+              </Link>
+            </div>
+          </div>
+
+          <div
+            className="divider"
+            style={{
+              position: "absolute",
+              left: 0,
+              bottom: 0,
+              width: "100%",
+              height: "1px",
+              transformOrigin: "left",
+              transform: "scaleX(0%)",
+            }}
+          />
+        </nav>
+
+        {/* ── Sidebar ── */}
+        <div
+          className="sidebar"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "5rem",
+            height: "100svh",
+            paddingTop: "1.5rem",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "flex-start",
+          }}
+        >
+          <div
+            className="logo"
+            style={{
+              width: "2rem",
+              aspectRatio: "1",
+              transform: "scale(0)",
+              position: "relative",
+            }}
+          >
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              fill
+              style={{ objectFit: "contain" }}
+              priority
+            />
+          </div>
+
+          <div
+            className="divider"
+            style={{
+              position: "absolute",
+              right: 0,
+              top: 0,
+              width: "1px",
+              height: "100svh",
+              transformOrigin: "top",
+              transform: "scaleY(0%)",
+            }}
+          />
+        </div>
+
+        {/* ── Header ── */}
+        <div
+          className="header"
+          style={{
+            position: "absolute",
+            top: "40%",
+            left: "7.5rem",
+            transform: "translateY(-50%)",
+            width: "60%",
+          }}
+        >
+          <h1>Life begins after flavour</h1>
+
+          <div className="cta-wrapper" style={{ marginTop: "2.5rem" }}>
+            <Link
+              href="/app"
+              style={{
+                display: "inline-block",
+                padding: "1rem 2rem",
+                backgroundColor: "var(--color-ink)",
+                color: "var(--color-cream)",
+                borderRadius: "var(--radius-md)",
+                fontFamily: "var(--font-sans)",
+                fontWeight: "600",
+                textDecoration: "none",
+                fontSize: "1.125rem",
+                position: "relative",
+                opacity: 0,
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+              }}
+            >
+              Order Now →
+            </Link>
+          </div>
+        </div>
+
+        {/* ── Site Info ── */}
+        <div
+          className="site-info"
+          style={{
+            position: "absolute",
+            right: "1.5rem",
+            top: "60%",
+            transform: "translateY(-50%)",
+            width: "20%",
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+          }}
+        >
+          <h2>Premium fast-casual food truck. Bold flavors, crafted with intention.</h2>
+
+          <div
+            className="divider"
+            style={{
+              width: "100%",
+              height: "1px",
+              transformOrigin: "left",
+              transform: "scaleX(0%)",
+            }}
+          />
+
+          <div
+            className="site-info-copy"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.25rem",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.875rem",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+            }}
+          >
+            <p>Fresh ingredients.</p>
+            <p>Bold flavors.</p>
+            <p>Zero compromise.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer
+        style={{
+          padding: "4rem 7.5rem 2rem",
+          backgroundColor: "var(--loader-bg)",
+          borderTop: "1px solid var(--stroke)",
+        }}
+      >
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "2fr 1fr 1fr 1fr",
+            gap: "3rem",
+            marginBottom: "3rem",
+          }}
+        >
+          {/* Brand */}
+          <div>
+            <h3
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "1.5rem",
+                fontWeight: "700",
+                marginBottom: "1rem",
+                color: "var(--color-ink)",
+              }}
+            >
+              ZOKU
+            </h3>
+            <p
+              style={{
+                fontFamily: "var(--font-sans)",
+                opacity: 0.7,
+                lineHeight: "1.6",
+                color: "var(--color-ink-soft)",
+              }}
+            >
+              Premium fast-casual food truck bringing bold flavors and fresh ingredients to your campus.
+            </p>
+          </div>
+
+          {/* Product */}
+          <div>
+            <h4
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontWeight: "600",
+                marginBottom: "1rem",
+                color: "var(--color-ink)",
+              }}
+            >
+              Menu
+            </h4>
+            <ul
+              style={{
+                listStyle: "none",
+                padding: 0,
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.5rem",
+              }}
+            >
+              <li>
+                <Link
+                  href="/app"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    opacity: 0.7,
+                    textDecoration: "none",
+                    color: "var(--color-ink-soft)",
+                  }}
+                >
+                  Order Now
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/menu"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    opacity: 0.7,
+                    textDecoration: "none",
+                    color: "var(--color-ink-soft)",
+                  }}
+                >
+                  Full Menu
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/trucks"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    opacity: 0.7,
+                    textDecoration: "none",
+                    color: "var(--color-ink-soft)",
+                  }}
+                >
+                  Our Trucks
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* About */}
+          <div>
+            <h4
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontWeight: "600",
+                marginBottom: "1rem",
+                color: "var(--color-ink)",
+              }}
+            >
+              About
+            </h4>
+            <ul
+              style={{
+                listStyle: "none",
+                padding: 0,
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.5rem",
+              }}
+            >
+              <li>
+                <Link
+                  href="/about"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    opacity: 0.7,
+                    textDecoration: "none",
+                    color: "var(--color-ink-soft)",
+                  }}
+                >
+                  Our Story
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    opacity: 0.7,
+                    textDecoration: "none",
+                    color: "var(--color-ink-soft)",
+                  }}
+                >
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/locations"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    opacity: 0.7,
+                    textDecoration: "none",
+                    color: "var(--color-ink-soft)",
+                  }}
+                >
+                  Locations
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontWeight: "600",
+                marginBottom: "1rem",
+                color: "var(--color-ink)",
+              }}
+            >
+              Legal
+            </h4>
+            <ul
+              style={{
+                listStyle: "none",
+                padding: 0,
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.5rem",
+              }}
+            >
+              <li>
+                <Link
+                  href="/privacy"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    opacity: 0.7,
+                    textDecoration: "none",
+                    color: "var(--color-ink-soft)",
+                  }}
+                >
+                  Privacy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    opacity: 0.7,
+                    textDecoration: "none",
+                    color: "var(--color-ink-soft)",
+                  }}
+                >
+                  Terms
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div
+          style={{
+            paddingTop: "2rem",
+            borderTop: "1px solid var(--stroke)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "var(--font-mono)",
+              opacity: 0.6,
+              fontSize: "0.875rem",
+              color: "var(--color-ink-muted)",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+            }}
+          >
+            © 2025 Zoku. All rights reserved.
+          </p>
+          <div style={{ display: "flex", gap: "1.5rem" }}>
+            <Link
+              href="https://instagram.com"
+              style={{
+                fontFamily: "var(--font-sans)",
+                opacity: 0.6,
+                textDecoration: "none",
+                color: "var(--color-ink-muted)",
+              }}
+            >
+              Instagram
+            </Link>
+            <Link
+              href="https://twitter.com"
+              style={{
+                fontFamily: "var(--font-sans)",
+                opacity: 0.6,
+                textDecoration: "none",
+                color: "var(--color-ink-muted)",
+              }}
+            >
+              Twitter
+            </Link>
+          </div>
+        </div>
+      </footer>
+    </>
+  );
 }
